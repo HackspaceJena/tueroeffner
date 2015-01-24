@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Türöffner</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="unlock_door">Sesam öffne dich</string>
+    <string name="button_wlan">✘ WLAN</string>
+    <string name="button_outer_door">Buzzer</string>
+    <string name="button_inner_door">Aufschliesen</string>
+    <string name="button_wlan_connected">✓ WLAN</string>
+    <string name="could_not_connect">Konnte nicht zum WLAN „Krautspace“ verbinden.</string>
+    <string name="door_key">DoorKey</string>
+    <string name="wlan_switcher">Tür WLAN aktivieren</string>
+    <string name="button_inner_door_open">Öffnen</string>
+    <string name="wlan_activated">WLAN „KrautSpace“ aktiviert.</string>
+    <string name="wlan_connected">WLAN „KrautSpace“ verbunden.</string>
+    <string name="wlan_deactivated">WLAN „KrautSpace“ deaktiviert.</string>
+    <string name="buzzer_success">Buzzer betätigt</string>
+    <string name="door_unlock">Tür entsperrt</string>
+    <string name="door_open">Tür geöffnet</string>
+
+</resources>
