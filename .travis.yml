@@ -6,6 +6,3 @@ components:
    - build-tools-21.1.2
    - android-21
    - extra-android-support
-
-before_install:
-   - chmod +x gradlew
