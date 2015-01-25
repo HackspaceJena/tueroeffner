@@ -1,6 +1,9 @@
 language: android
 jdk: oraclejdk7
 
+before_script:
+   - echo yes | android update sdk -u -a -t 'android-14'
+
 script:
    - ./gradlew build
 
