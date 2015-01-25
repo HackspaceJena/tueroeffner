@@ -13,9 +13,17 @@ android {
     }
     buildTypes {
         release {
+            testCoverageEnabled true
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+        debug {
+            testCoverageEnabled true
+        }
+    }
+
+    jacoco {
+        version = '0.7.2.201409121644'
     }
 }
 
