@@ -9,5 +9,8 @@ components:
    - extra-google-m2repository
    - extra-android-m2repository
 
-before_install:
+before_script:
    - echo yes | android update sdk --no-ui -f
+   - ls -l /usr/local/android-sdk/extras/android/m2repository/com/android/support/
+   - ls -l /usr/local/android-sdk/extras/android/m2repository/com/android/support/appcompat-v7/
+   - ls -l /usr/local/android-sdk/extras/android/m2repository/com/android/support/appcompat-v7/21.0.3/
