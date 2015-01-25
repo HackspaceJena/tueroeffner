@@ -10,4 +10,4 @@ components:
    - extra-android-m2repository
 
 before_install:
-   - echo yes | ./android update sdk --no-ui -f
+   - echo yes | android update sdk --no-ui -f
