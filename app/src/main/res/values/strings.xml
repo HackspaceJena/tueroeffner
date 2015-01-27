@@ -14,5 +14,6 @@
     <string name="buzzer_success">Buzzer betätigt</string>
     <string name="door_unlock">Tür entsperrt</string>
     <string name="door_open">Tür geöffnet</string>
+    <string name="door_lock">Schließen</string>
 
 </resources>

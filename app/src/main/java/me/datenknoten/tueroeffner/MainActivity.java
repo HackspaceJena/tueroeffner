@@ -216,4 +216,13 @@ public class MainActivity extends ActionBarActivity {
             Toast.makeText(v.getContext(), "Konnte Befehl „Tür öffnen“ nicht ausführen.", Toast.LENGTH_SHORT).show();
         }
     }
+
+    public void buttonLockInnerDoor(View v) {
+        try {
+            new CommandExecuter(getDoorKey()).doInBackground("indoor_lock");
+            Toast.makeText(v.getContext(), getString(R.string.door_open), Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Toast.makeText(v.getContext(), "Konnte Befehl „Tür schließen“ nicht ausführen.", Toast.LENGTH_SHORT).show();
+        }
+    }
 }
