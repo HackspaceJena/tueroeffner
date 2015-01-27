@@ -45,6 +45,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 
 
+
 public class MainActivity extends ActionBarActivity {
 
     final static String networkSSID = "\"KrautSpace\"";
@@ -169,38 +170,50 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-    public void buttonOpenOuterDoor(View v) {
-        executeCommand("outdoor_buzz");
-        Toast.makeText(v.getContext(), getString(R.string.buzzer_success), Toast.LENGTH_SHORT).show();
+    private String getDoorKey() {
+        EditText key_editor = (EditText) findViewById(R.id.txtPass);
+        return key_editor.getText().toString();
     }
 
-    private void executeCommand(String cmd) {
-        EditText key_editor = (EditText) findViewById(R.id.txtPass);
-
+    /**
+     * Executes outdoor buzz
+     *
+     * @param v
+     */
+    public void buttonOpenOuterDoor(View v) {
         try {
-            HttpClient client = new DefaultHttpClient();
-            HttpGet request = new HttpGet();
-            URI uri = new URI("https://tuer.hackspace-jena.de/cgi-bin/kraut.space?secret="+key_editor.getText()+"&cmd="+cmd);
-            request.setURI(uri);
-            HttpResponse response = client.execute(request);
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        } catch (ClientProtocolException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            new CommandExecuter(getDoorKey()).doInBackground("outdoor_buzz");
+            Toast.makeText(v.getContext(), getString(R.string.buzzer_success), Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Toast.makeText(v.getContext(), "Konnte Befehl „Buzzer“ nicht ausführen.", Toast.LENGTH_SHORT).show();
         }
     }
 
+    /**
+     * Executes unlock indoor
+     *
+     * @param v
+     */
     public void buttonOpenInnerDoor(View v) {
-        executeCommand("indoor_unlock");
-        Toast.makeText(v.getContext(), getString(R.string.door_unlock), Toast.LENGTH_SHORT).show();
+        try {
+            new CommandExecuter(getDoorKey()).doInBackground("indoor_unlock");
+            Toast.makeText(v.getContext(), getString(R.string.door_unlock), Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Toast.makeText(v.getContext(), "Konnte Befehl „Tür aufschließen“ nicht ausführen.", Toast.LENGTH_SHORT).show();
+        }
     }
 
-    public void buttonUnluckInnerDoor(View v) {
-        executeCommand("indoor_open");
-        Toast.makeText(v.getContext(), getString(R.string.door_open), Toast.LENGTH_SHORT).show();
+    /**
+     * Executes open indoor
+     *
+     * @param v
+     */
+    public void buttonUnlockInnerDoor(View v) {
+        try {
+            new CommandExecuter(getDoorKey()).doInBackground("indoor_open");
+            Toast.makeText(v.getContext(), getString(R.string.door_open), Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Toast.makeText(v.getContext(), "Konnte Befehl „Tür öffnen“ nicht ausführen.", Toast.LENGTH_SHORT).show();
+        }
     }
 }
