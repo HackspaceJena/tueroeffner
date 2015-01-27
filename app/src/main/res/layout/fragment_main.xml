@@ -37,25 +37,33 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/button_outer_door"
-                android:id="@+id/button3"
-                android:onClick="buttonOpenOuterDoor"
-                android:clickable="false"
-                android:enabled="false" />
+                android:id="@+id/button_buzzer"
+                android:enabled="false"
+                android:onClick="buttonOpenOuterDoor" />
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/button_inner_door"
-                android:id="@+id/button2"
-                android:onClick="buttonOpenInnerDoor"
-                android:enabled="false" />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/button"
-                android:text="@string/button_inner_door_open"
-                android:enabled="false" />
         </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_inner_door"
+            android:id="@+id/button_door_unlock"
+            android:onClick="buttonOpenInnerDoor"
+            android:enabled="false" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/button_door_open"
+            android:text="@string/button_inner_door_open"
+            android:enabled="false"
+            android:onClick="buttonUnlockInnerDoor" />
+    </LinearLayout>
 
 </LinearLayout>

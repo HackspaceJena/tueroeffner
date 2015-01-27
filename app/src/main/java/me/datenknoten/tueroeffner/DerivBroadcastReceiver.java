@@ -23,20 +23,20 @@ public class DerivBroadcastReceiver extends BroadcastReceiver {
             NetworkInfo nwInfo = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
             if (nwInfo.getExtraInfo().equals(MainActivity.networkSSID) && nwInfo.isConnected()) {
                 View rootView = ((Activity)context).getWindow().getDecorView().findViewById(android.R.id.content);
-                Button button = (Button) rootView.findViewById(R.id.button2);
+                Button button = (Button) rootView.findViewById(R.id.button_buzzer);
                 button.setEnabled(true);
-                button = (Button) rootView.findViewById(R.id.button3);
+                button = (Button) rootView.findViewById(R.id.button_door_unlock);
                 button.setEnabled(true);
-                button = (Button) rootView.findViewById(R.id.button);
+                button = (Button) rootView.findViewById(R.id.button_door_open);
                 button.setEnabled(true);
                 Toast.makeText(context, context.getString(R.string.wlan_connected), Toast.LENGTH_SHORT).show();
             } else {
                 View rootView = ((Activity)context).getWindow().getDecorView().findViewById(android.R.id.content);
-                Button button = (Button) rootView.findViewById(R.id.button2);
+                Button button = (Button) rootView.findViewById(R.id.button_buzzer);
                 button.setEnabled(false);
-                button = (Button) rootView.findViewById(R.id.button3);
+                button = (Button) rootView.findViewById(R.id.button_door_unlock);
                 button.setEnabled(false);
-                button = (Button) rootView.findViewById(R.id.button);
+                button = (Button) rootView.findViewById(R.id.button_door_open);
                 button.setEnabled(false);
             }
         }
