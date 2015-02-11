@@ -56,6 +56,7 @@ import javax.net.ssl.TrustManager;
 public class MainActivity extends ActionBarActivity {
 
     final static String networkSSID = "KrautSpace";
+    private DerivBroadcastReceiver receiver = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +71,14 @@ public class MainActivity extends ActionBarActivity {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION) ;
         intentFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
-        registerReceiver(new DerivBroadcastReceiver(this, networkSSID),intentFilter);
+        receiver = new DerivBroadcastReceiver(this, networkSSID);
+        registerReceiver(receiver,intentFilter);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(receiver);
     }
 
 
@@ -136,18 +144,19 @@ public class MainActivity extends ActionBarActivity {
                 s.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        String escaped_ssid = "\""+networkSSID+"\"";
                         Context context = rootView.getContext();
                         WifiManager wifiManager = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
                         if (isChecked) {
                             WifiConfiguration conf = new WifiConfiguration();
-                            conf.SSID = networkSSID;
+                            conf.SSID = escaped_ssid;
                             conf.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
                             int retval = wifiManager.addNetwork(conf);
                             List<WifiConfiguration> list = wifiManager.getConfiguredNetworks();
 
 
                             for( WifiConfiguration i : list ) {
-                                if(i.SSID != null && i.SSID.equals(networkSSID)) {
+                                if(i.SSID != null && i.SSID.equals(escaped_ssid)) {
                                     wifiManager.enableNetwork(i.networkId, false);
                                 } else {
                                     wifiManager.disableNetwork(i.networkId);
@@ -159,7 +168,7 @@ public class MainActivity extends ActionBarActivity {
                         } else {
                             List<WifiConfiguration> list = wifiManager.getConfiguredNetworks();
                             for( WifiConfiguration i : list ) {
-                                if(i.SSID != null && i.SSID.equals(networkSSID)) {
+                                if(i.SSID != null && i.SSID.equals(escaped_ssid)) {
                                     wifiManager.removeNetwork(i.networkId);
                                 } else {
                                     wifiManager.enableNetwork(i.networkId,false);
