@@ -55,7 +55,7 @@ import javax.net.ssl.TrustManager;
 
 public class MainActivity extends ActionBarActivity {
 
-    final static String networkSSID = "\"KrautSpace\"";
+    final static String networkSSID = "KrautSpace";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +70,7 @@ public class MainActivity extends ActionBarActivity {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION) ;
         intentFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
-        registerReceiver(new DerivBroadcastReceiver(),intentFilter);
+        registerReceiver(new DerivBroadcastReceiver(this, networkSSID),intentFilter);
     }
 
 
