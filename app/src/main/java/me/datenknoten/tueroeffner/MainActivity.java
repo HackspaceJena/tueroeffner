@@ -21,6 +21,7 @@ import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -38,12 +39,18 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.thoughtcrime.ssl.pinning.PinningTrustManager;
+import org.thoughtcrime.ssl.pinning.SystemKeyStore;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Ion;
+
+import javax.net.ssl.TrustManager;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -181,12 +188,7 @@ public class MainActivity extends ActionBarActivity {
      * @param v
      */
     public void buttonOpenOuterDoor(View v) {
-        try {
-            new CommandExecuter(getDoorKey()).doInBackground("outdoor_buzz");
-            Toast.makeText(v.getContext(), getString(R.string.buzzer_success), Toast.LENGTH_SHORT).show();
-        } catch (Exception e) {
-            Toast.makeText(v.getContext(), "Konnte Befehl „Buzzer“ nicht ausführen.", Toast.LENGTH_SHORT).show();
-        }
+        executeCommand("outdoor_buzz",v.getContext());
     }
 
     /**
@@ -195,12 +197,7 @@ public class MainActivity extends ActionBarActivity {
      * @param v
      */
     public void buttonOpenInnerDoor(View v) {
-        try {
-            new CommandExecuter(getDoorKey()).doInBackground("indoor_unlock");
-            Toast.makeText(v.getContext(), getString(R.string.door_unlock), Toast.LENGTH_SHORT).show();
-        } catch (Exception e) {
-            Toast.makeText(v.getContext(), "Konnte Befehl „Tür aufschließen“ nicht ausführen.", Toast.LENGTH_SHORT).show();
-        }
+        executeCommand("indoor_unlock",v.getContext());
     }
 
     /**
@@ -209,20 +206,19 @@ public class MainActivity extends ActionBarActivity {
      * @param v
      */
     public void buttonUnlockInnerDoor(View v) {
-        try {
-            new CommandExecuter(getDoorKey()).doInBackground("indoor_open");
-            Toast.makeText(v.getContext(), getString(R.string.door_open), Toast.LENGTH_SHORT).show();
-        } catch (Exception e) {
-            Toast.makeText(v.getContext(), "Konnte Befehl „Tür öffnen“ nicht ausführen.", Toast.LENGTH_SHORT).show();
-        }
+        executeCommand("indoor_open",v.getContext());
     }
 
     public void buttonLockInnerDoor(View v) {
-        try {
-            new CommandExecuter(getDoorKey()).doInBackground("indoor_lock");
-            Toast.makeText(v.getContext(), getString(R.string.door_open), Toast.LENGTH_SHORT).show();
-        } catch (Exception e) {
-            Toast.makeText(v.getContext(), "Konnte Befehl „Tür schließen“ nicht ausführen.", Toast.LENGTH_SHORT).show();
-        }
+        executeCommand("indoor_lock",v.getContext());
+    }
+
+    private void executeCommand(String cmd, Context context) {
+        TrustManager[] trustManagers = new TrustManager[] { new PinningTrustManager(SystemKeyStore.getInstance(context),
+                new String[] { "F1E2BB0724ACF34E60557DE95BD3DD30BCD08817" }, 0) };
+        //Ion.getDefault(this).configure().setLogging("iontest", Log.VERBOSE);
+        Ion ion = Ion.getInstance(context, "tuer");
+        ion.getHttpClient().getSSLSocketMiddleware().setTrustManagers(trustManagers);
+        ion.with(this).load("https://tuer.krautspace.de/cgi-bin/kraut.space?secret=" + this.getDoorKey() + "&cmd=" + cmd).asString();
     }
 }
