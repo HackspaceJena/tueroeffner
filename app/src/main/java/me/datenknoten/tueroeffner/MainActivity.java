@@ -160,7 +160,11 @@ public class MainActivity extends ActionBarActivity {
 
 
                             WifiConfiguration wifiConfig = new WifiConfiguration();
-                            wifiConfig.SSID = String.format("\"%s\"", networkSSID);
+                            if (Build.VERSION.SDK_INT > 17) {
+                                wifiConfig.SSID = String.format("\"%s\"", networkSSID);
+                            } else {
+                                wifiConfig.SSID = networkSSID;
+                            }
 
                             int netId = wifiManager.addNetwork(wifiConfig);
                             wifiManager.disconnect();
