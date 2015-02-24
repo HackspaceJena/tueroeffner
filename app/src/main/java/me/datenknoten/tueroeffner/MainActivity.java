@@ -45,12 +45,17 @@ import org.thoughtcrime.ssl.pinning.SystemKeyStore;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
+import com.koushikdutta.ion.future.ResponseFuture;
 
+import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -69,10 +74,10 @@ public class MainActivity extends ActionBarActivity {
         }
 
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION) ;
+        intentFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
         intentFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
         receiver = new DerivBroadcastReceiver(this, networkSSID);
-        registerReceiver(receiver,intentFilter);
+        registerReceiver(receiver, intentFilter);
     }
 
     @Override
@@ -117,8 +122,8 @@ public class MainActivity extends ActionBarActivity {
                                  Bundle savedInstanceState) {
             final View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-            final SharedPreferences door_pref = getActivity().getSharedPreferences("tueroeffner",Context.MODE_PRIVATE);
-            String door_key = door_pref.getString(getString(R.string.door_key),"");
+            final SharedPreferences door_pref = getActivity().getSharedPreferences("tueroeffner", Context.MODE_PRIVATE);
+            String door_key = door_pref.getString(getString(R.string.door_key), "");
             final EditText key_editor = (EditText) rootView.findViewById(R.id.txtPass);
             key_editor.setText(door_key);
 
@@ -128,14 +133,16 @@ public class MainActivity extends ActionBarActivity {
 
                     // you can call or do what you want with your EditText here
                     SharedPreferences.Editor editor = door_pref.edit();
-                    editor.putString(getString(R.string.door_key),key_editor.getText().toString());
+                    editor.putString(getString(R.string.door_key), key_editor.getText().toString());
                     editor.apply();
 
                 }
 
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                }
 
-                public void onTextChanged(CharSequence s, int start, int before, int count) {}
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                }
             });
 
             Switch s = (Switch) rootView.findViewById(R.id.switchWLAN);
@@ -144,9 +151,9 @@ public class MainActivity extends ActionBarActivity {
                 s.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        String escaped_ssid = "\""+networkSSID+"\"";
+                        String escaped_ssid = "\"" + networkSSID + "\"";
                         Context context = rootView.getContext();
-                        WifiManager wifiManager = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
+                        WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
                         if (isChecked) {
                             WifiConfiguration conf = new WifiConfiguration();
                             conf.SSID = escaped_ssid;
@@ -155,8 +162,8 @@ public class MainActivity extends ActionBarActivity {
                             List<WifiConfiguration> list = wifiManager.getConfiguredNetworks();
 
 
-                            for( WifiConfiguration i : list ) {
-                                if(i.SSID != null && i.SSID.equals(escaped_ssid)) {
+                            for (WifiConfiguration i : list) {
+                                if (i.SSID != null && i.SSID.equals(escaped_ssid)) {
                                     wifiManager.enableNetwork(i.networkId, false);
                                 } else {
                                     wifiManager.disableNetwork(i.networkId);
@@ -167,11 +174,11 @@ public class MainActivity extends ActionBarActivity {
                             Toast.makeText(buttonView.getContext(), getString(R.string.wlan_activated), Toast.LENGTH_SHORT).show();
                         } else {
                             List<WifiConfiguration> list = wifiManager.getConfiguredNetworks();
-                            for( WifiConfiguration i : list ) {
-                                if(i.SSID != null && i.SSID.equals(escaped_ssid)) {
+                            for (WifiConfiguration i : list) {
+                                if (i.SSID != null && i.SSID.equals(escaped_ssid)) {
                                     wifiManager.removeNetwork(i.networkId);
                                 } else {
-                                    wifiManager.enableNetwork(i.networkId,false);
+                                    wifiManager.enableNetwork(i.networkId, false);
                                 }
                             }
                             wifiManager.disconnect();
@@ -197,7 +204,7 @@ public class MainActivity extends ActionBarActivity {
      * @param v
      */
     public void buttonOpenOuterDoor(View v) {
-        executeCommand("outdoor_buzz",v.getContext());
+        executeCommand("outdoor_buzz", v.getContext());
     }
 
     /**
@@ -206,7 +213,7 @@ public class MainActivity extends ActionBarActivity {
      * @param v
      */
     public void buttonOpenInnerDoor(View v) {
-        executeCommand("indoor_unlock",v.getContext());
+        executeCommand("indoor_unlock", v.getContext());
     }
 
     /**
@@ -215,11 +222,11 @@ public class MainActivity extends ActionBarActivity {
      * @param v
      */
     public void buttonUnlockInnerDoor(View v) {
-        executeCommand("indoor_open",v.getContext());
+        executeCommand("indoor_open", v.getContext());
     }
 
     public void buttonLockInnerDoor(View v) {
-        executeCommand("indoor_lock",v.getContext());
+        executeCommand("indoor_lock", v.getContext());
     }
 
     private void executeCommand(String cmd, Context context) {
