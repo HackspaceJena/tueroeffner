@@ -169,6 +169,12 @@ public class MainActivity extends ActionBarActivity {
 
                             Toast.makeText(buttonView.getContext(), getString(R.string.wlan_activated), Toast.LENGTH_SHORT).show();
                         } else {
+                            List<WifiConfiguration> list = wifiManager.getConfiguredNetworks();
+                            for (WifiConfiguration i : list) {
+                                if (i.SSID != null && i.SSID.equals(networkSSID)) {
+                                    wifiManager.removeNetwork(i.networkId);
+                                }
+                            }
                             Toast.makeText(buttonView.getContext(), getString(R.string.wlan_deactivated), Toast.LENGTH_SHORT).show();
                         }
                     }
