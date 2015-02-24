@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -33,6 +34,12 @@ public class DerivBroadcastReceiver extends BroadcastReceiver {
 
         if (nwInfo != null && nwInfo.isConnectedOrConnecting()) {
             String ssid = wifiInfo.getSSID();
+
+
+            // Build.VERSION.SDK_INT is incompatible with device API lvl < 4 use String.toInteger(Build.VERSION.SDK) or maybe find some other way ^_^
+            if (Build.VERSION.SDK_INT > 17){
+                targetSSID.replace("\"", "");
+            }
 
              if (ssid.equals(targetSSID)){
                 buttonActivator((Activity) context, true);
