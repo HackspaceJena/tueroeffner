@@ -125,7 +125,7 @@ public class MainActivity extends ActionBarActivity {
             });
 
             Switch s = (Switch) rootView.findViewById(R.id.switchWLAN);
-
+            //
             if (s != null) {
                 s.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
