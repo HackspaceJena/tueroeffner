@@ -38,7 +38,7 @@ public class DerivBroadcastReceiver extends BroadcastReceiver {
 
             // Build.VERSION.SDK_INT is incompatible with device API lvl < 4 use String.toInteger(Build.VERSION.SDK) or maybe find some other way ^_^
             if (Build.VERSION.SDK_INT > 17){
-                targetSSID.replace("\"", "");
+                ssid = ssid.replace("\"", "");
             }
 
              if (ssid.equals(targetSSID)){
