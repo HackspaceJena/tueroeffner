@@ -223,11 +223,39 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void executeCommand(String cmd, Context context) {
-        TrustManager[] trustManagers = new TrustManager[] { new PinningTrustManager(SystemKeyStore.getInstance(context),
-                new String[] { "F1E2BB0724ACF34E60557DE95BD3DD30BCD08817" }, 0) };
-        //Ion.getDefault(this).configure().setLogging("iontest", Log.VERBOSE);
-        Ion ion = Ion.getInstance(context, "tuer");
-        ion.getHttpClient().getSSLSocketMiddleware().setTrustManagers(trustManagers);
-        ion.with(this).load("https://tuer.krautspace.de/cgi-bin/kraut.space?secret=" + this.getDoorKey() + "&cmd=" + cmd).asString();
+        // Trust Manager
+        TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
+            public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                return null;
+            }
+
+            public void checkClientTrusted(java.security.cert.X509Certificate[] certs, String authType) {
+            }
+
+            public void checkServerTrusted(java.security.cert.X509Certificate[] certs, String authType) {
+            }
+        }};
+        //Install the all-trusting trust manager
+        SSLContext sc = null;
+        try {
+            sc = SSLContext.getInstance("TLS");
+            sc.init(null, trustAllCerts, new java.security.SecureRandom());
+            sc.setDefault(sc);
+
+        } catch (Exception e) {
+        }
+
+        /** TODO it would be better to get the PinningTrustManager to get running, because its more safe. */
+        /*TrustManager[] trustManagers = new TrustManager[]{new PinningTrustManager(SystemKeyStore.getInstance(context),
+                new String[]{"F1E2BB0724ACF34E60557DE95BD3DD30BCD08817"}, 0)};*/
+        
+        Ion.getDefault(context).getHttpClient().getSSLSocketMiddleware().setTrustManagers(trustAllCerts);
+        Ion.getDefault(context).getHttpClient().getSSLSocketMiddleware().setSSLContext(sc);
+
+        Ion.getDefault(context).getHttpClient().getSSLSocketMiddleware().setHostnameVerifier(org.apache.http.conn.ssl.SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+
+        Ion.getDefault(this).configure().setLogging("iontest", Log.VERBOSE);
+
+        Ion.with(this).load("https://tuer.hackspace-jena.de/cgi-bin/kraut.space?secret=" + this.getDoorKey() + "&cmd=" + cmd).asString();
     }
 }
