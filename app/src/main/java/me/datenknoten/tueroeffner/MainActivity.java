@@ -63,6 +63,7 @@ public class MainActivity extends ActionBarActivity {
     final static String networkSSID = "KrautSpace";
     private DerivBroadcastReceiver receiver = null;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,6 +73,7 @@ public class MainActivity extends ActionBarActivity {
                     .add(R.id.container, new PlaceholderFragment())
                     .commit();
         }
+
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
@@ -146,7 +148,7 @@ public class MainActivity extends ActionBarActivity {
             });
 
             Switch s = (Switch) rootView.findViewById(R.id.switchWLAN);
-
+            //
             if (s != null) {
                 s.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
@@ -155,34 +157,18 @@ public class MainActivity extends ActionBarActivity {
                         Context context = rootView.getContext();
                         WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
                         if (isChecked) {
-                            WifiConfiguration conf = new WifiConfiguration();
-                            conf.SSID = escaped_ssid;
-                            conf.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
-                            int retval = wifiManager.addNetwork(conf);
-                            List<WifiConfiguration> list = wifiManager.getConfiguredNetworks();
 
 
-                            for (WifiConfiguration i : list) {
-                                if (i.SSID != null && i.SSID.equals(escaped_ssid)) {
-                                    wifiManager.enableNetwork(i.networkId, false);
-                                } else {
-                                    wifiManager.disableNetwork(i.networkId);
-                                }
-                            }
+                            WifiConfiguration wifiConfig = new WifiConfiguration();
+                            wifiConfig.SSID = String.format("\"%s\"", networkSSID);
+
+                            int netId = wifiManager.addNetwork(wifiConfig);
                             wifiManager.disconnect();
+                            wifiManager.enableNetwork(netId, true);
                             wifiManager.reconnect();
+
                             Toast.makeText(buttonView.getContext(), getString(R.string.wlan_activated), Toast.LENGTH_SHORT).show();
                         } else {
-                            List<WifiConfiguration> list = wifiManager.getConfiguredNetworks();
-                            for (WifiConfiguration i : list) {
-                                if (i.SSID != null && i.SSID.equals(escaped_ssid)) {
-                                    wifiManager.removeNetwork(i.networkId);
-                                } else {
-                                    wifiManager.enableNetwork(i.networkId, false);
-                                }
-                            }
-                            wifiManager.disconnect();
-                            wifiManager.reconnect();
                             Toast.makeText(buttonView.getContext(), getString(R.string.wlan_deactivated), Toast.LENGTH_SHORT).show();
                         }
                     }
